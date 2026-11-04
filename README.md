@@ -29,6 +29,25 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
+My recommender works like "describe the song" in Spotify. Each song has attributes like genre, mood, energy, and acousticness, and each user profile lists what they're looking for. The system scores every song by closeness to the profile: genre counts most, then mood, then the numbers. It recommends the top scorers. It only knows ten songs and can't learn from other listeners, so it's a simplified version of the real thing.
+
+Each Song has:
+- id and title so we can identify it (not used for scoring)
+- artist (just for display)
+- genre (like pop, lofi, or rock)
+- mood (like happy, chill, or intense)
+- energy on a 0 to 1 scale
+- tempo_bpm (bpm)
+- valence on a 0 to 1 scale (how positive the song feels)
+- danceability on a 0 to 1 scale
+- acousticness on a 0 to 1 scale
+
+Each UserProfile stores:
+- favorite_genre (the genre they're most into)
+- favorite_mood (the vibe they're looking for)
+- target_energy (how much energy they want, 0 to 1)
+- likes_acoustic (yes or no)
+
 ---
 
 ## Getting Started
