@@ -1,6 +1,6 @@
 {
     "devin.defaultMode": "ask",
-    "devin.implicitContext.enabled": true,
+    "devin.implicitContext.enabled": false,
     "devin.defaultModel": "swe-2-high",
     "devin.defaultThoughtLevel": "medium"
 }
