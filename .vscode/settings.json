@@ -1,5 +1,5 @@
 {
-    "devin.defaultMode": "ask",
+    "devin.defaultMode": "smart",
     "devin.implicitContext.enabled": false,
     "devin.defaultModel": "swe-2-high",
     "devin.defaultThoughtLevel": "medium"
