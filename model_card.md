@@ -58,29 +58,71 @@ Prompts:
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The biggest weakness I found is that the energy scoring quietly favors people with extreme tastes over people with moderate ones. My formula measures the distance between the user's target energy and the song's energy, so a user who wants energy at 0.95 creates a huge spread between songs, but a user who wants 0.5 gets almost identical scores for half the catalog. On top of that, the formula treats "too energetic" and "not energetic enough" as equally bad, when most listeners feel one direction is worse. There's also a genre imbalance in the data: lofi has three songs while most genres only have one, so fans of well-represented genres have more chances to score the +2.0 bonus than everyone else.  
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
+I tested three normal profiles (High-Energy Pop, Chill Lofi, Deep Intense Rock) and the results matched intuition: the lofi songs swept the Chill Lofi list, and exact genre+mood matches always won. Then I tried some "adversarial" profiles to see if the scoring could be tricked.
 
-Prompts:  
+**Comparing the normal profiles to each other**
 
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
+- High-Energy Pop vs Chill Lofi: the lists are mirror images. Every song the pop profile recommends has energy above 0.75 and low acousticness; every song the lofi profile recommends has energy below 0.45 and high acousticness. Same scoring rule, completely different results, which means the energy target and acoustic flag are actually steering the output instead of just decorating it.
+- High-Energy Pop vs Deep Intense Rock: both users want energy around 0.9, but the winners are different because the tags are different (Sunrise City for pop, Storm Runner for rock). The interesting one is Gym Hero showing up in both lists. It is a pop song with the "intense" mood and the highest energy in the catalog, so it bridges both profiles. For the happy pop user it ranks second even though its mood says "intense," because two strong feature matches (pop + energy) outweigh one miss. A real listener would probably feel Gym Hero is fine for a workout but weird as a "happy" pick, so this is where a one-word mood tag falls short of real understanding.
+- Chill Lofi vs Deep Intense Rock: zero shared songs. The acoustic flag splits them cleanly: the lofi list is all 0.7+ acousticness, the rock list is all under 0.10. The two users basically live in different halves of the catalog, which is exactly what you would expect from a chill-studier versus a headbanger.
 
-No need for numeric metrics unless you created some.
+**Edge case 1: Conflicted user** (sad mood + very high energy + acoustic)
+
+```
+1. Neon Requiem (classical/melancholic) - 3.88
+   genre match (classical) +2.0, mood match (melancholic) +1.0, energy closeness +0.41, acousticness fit +0.47
+2. Fog Harbor Blues (blues/melancholic) - 2.08
+   mood match (melancholic) +1.0, energy closeness +0.65, acousticness fit +0.44
+3. Gym Hero (pop/intense) - 1.50
+   energy closeness +1.47, acousticness fit +0.03
+```
+
+The system handles this okay. The mood+genre match still wins even though the energy fit is terrible, which is arguably the right call. But notice a "happy workout pop" song lands at #3 for a user who said they want sad music. That's what happens when you can only express one mood.
+
+**Edge case 2: Ghost profile** (genre "folk" and mood "dreamy" are not in the catalog)
+
+```
+1. Blue Hour Ballad (r&b/romantic) - 1.77
+   energy closeness +1.50, acousticness fit +0.28
+2. Midnight Coding (lofi/chill) - 1.52
+   energy closeness +1.38, acousticness fit +0.15
+3. Night Drive Loop (synthwave/moody) - 1.52
+   energy closeness +1.12, acousticness fit +0.39
+```
+
+When neither tag matches anything, the ranking is driven entirely by the numbers. The results aren't wrong exactly, but they feel random because the two strongest signals are dead. This is the cold-start problem in miniature.
+
+**Edge case 3: Genre hacker** (empty genre string)
+
+```
+1. Library Rain (lofi/chill) - 3.85
+   related genre (lofi) +1.0, mood match (chill) +1.0, energy closeness +1.42, acousticness fit +0.43
+2. Midnight Coding (lofi/chill) - 3.82
+   related genre (lofi) +1.0, mood match (chill) +1.0, energy closeness +1.47, acousticness fit +0.35
+3. Spacewalk Thoughts (ambient/chill) - 3.78
+   related genre (ambient) +1.0, mood match (chill) +1.0, energy closeness +1.32, acousticness fit +0.46
+```
+
+Found a real bug. An empty genre string is technically "contained in" every genre, so every single song gets +1.0 free points as a "related genre." It doesn't change the ranking between songs since they all get the same bonus, but it inflates scores and produces a fake "related genre" reason on every recommendation. A strip/empty check before scoring would fix it.
+
+**Edge case 4: Sloppy input** (genre is " pop" with a leading space)
+
+```
+1. Sunrise City (pop/happy) - 3.88
+   related genre (pop) +1.0, mood match (happy) +1.0, energy closeness +1.47, acousticness fit +0.41
+2. Rooftop Lights (indie pop/happy) - 3.77
+   related genre (indie pop) +1.0, mood match (happy) +1.0, energy closeness +1.44, acousticness fit +0.33
+3. Gym Hero (pop/intense) - 2.78
+   related genre (pop) +1.0, energy closeness +1.30, acousticness fit +0.47
+```
+
+An untrimmed space silently downgrades an exact match to a fuzzy one. Sunrise City still wins here but loses a full point. The fix is just calling .strip() on inputs, but it shows how fragile string matching is.
 
 ---
 

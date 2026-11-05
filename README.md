@@ -142,11 +142,15 @@ Top 5 Recommendations
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+I ran three test profiles (High-Energy Pop, Chill Lofi, Deep Intense Rock) and compared the results to my own musical intuition.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+**Why Sunrise City ranked first for the pop profile.** It's the only song in the catalog that is both pop AND happy, so it hit every scoring term at once: +2.0 for the exact genre, +1.0 for the mood, +1.47 for energy being nearly dead-on (0.82 vs the 0.8 target), and +0.41 for the acousticness fit. A score of 4.88 out of 5.00 feels right to me. If someone says "I want upbeat happy pop," that is exactly what this song is.
+
+**Does it feel right overall?** Mostly yes. Three different songs topped the three lists (Sunrise City, Library Rain, Storm Runner), so no single song is dominating and the genre weight isn't overpowering the other features. For the Chill Lofi profile, Library Rain beat Midnight Coding 4.85 to 4.82 even though both are lofi/chill. The tiebreaker was acousticness (0.86 vs 0.71). That felt plausible: the dreamier, more acoustic song edging out the one that's closer to background noise.
+
+**Where it felt wrong.** In Deep Intense Rock, Iron Cathedral (metal, aggressive, 0.97 energy) ranked 5th, below a pop song and an edm track. Intuitively a metal song is the closest thing to rock in the catalog, and "aggressive" is basically "intense." But the scoring treats genre and mood as exact string matches, so metal gets zero genre points and aggressive gets zero mood points. The weights are fine; the problem is the tags are too literal.
+
+**Did one song keep topping every list?** No, which tells me the 2.0 genre weight is balanced. Genre did decide one close call though: for the Chill Lofi profile, Focus Flow (lofi/focused) ranked above Spacewalk Thoughts (ambient/chill) purely because of genre. You could argue either is the better pick for someone who wants chill, so that's a judgment call rather than a bug.
 
 ---
 
