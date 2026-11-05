@@ -174,10 +174,13 @@ Read and complete `model_card.md`:
 
 [**Model Card**](model_card.md)
 
-Write 1 to 2 paragraphs here about what you learned:
+My biggest learning moment was realizing the math isn't the hard part. Adding up weighted points took an afternoon. Deciding what deserves points, and figuring out that "closeness" matters more than raw values, took way longer. The empty genre string bug drove this home: my fuzzy match was handing out free points to every song in the catalog, and I only caught it because I tested a weird profile on purpose.
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+Using AI tools helped most with the research side. Learning how Spotify and YouTube actually do this made my tiny version make sense as a simplified version of the real thing. But I had to double-check constantly. The AI suggested features and weights that sounded smart on paper, and I still had to run the profiles myself to see if they held up. The bugs I found, like the whitespace issue and the empty string exploit, came from running the code, not from the suggestions.
+
+What surprised me is how alive a simple point system feels. There is no learning, no model, just addition. But when Gym Hero kept showing up for the happy pop user, it felt like a real recommendation quirk, the same way Spotify pushes an odd pick sometimes. That's when it clicked that recommendations that feel intelligent are mostly just decent data plus a sensible scoring rule.
+
+If I extended this project, I would add listening history so profiles build themselves instead of being typed in, a genre similarity map so metal counts for rock fans, and asymmetric energy scoring since "too hyped" feels worse than "too chill" for most people.
 
 
 

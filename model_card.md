@@ -2,20 +2,13 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**VibeMatch 1.0**
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+VibeMatch recommends the top 5 songs from a small catalog based on a user's stated preferences. It assumes the user can describe what they want up front: a favorite genre, a mood, an energy level, and whether they like acoustic music. This is a classroom project for learning how recommenders work. It is not meant for real users or real music libraries.  
 
 ---
 
@@ -33,26 +26,13 @@ Compared to the starter code, the main thing I added was the actual scoring rule
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The catalog has 18 songs in a CSV file. The starter file had 10 songs and I added 8 more to cover genres and moods that were missing, like metal, classical, hip hop, and country. Each song has a genre, a mood, and numbers for energy, tempo, valence, danceability, and acousticness. What the data cannot capture: lyrics, artist reputation, how popular a song is, or what the user listened to before. Taste is more than a row in a table.  
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system works best for users with clear, single tastes. The Chill Lofi profile got exactly the top three lofi songs, and the pop and rock profiles each got their best match first. Mood matching does a nice job bridging genres, like recommending an ambient song to a chill-seeking lofi fan. The explanations are a real strength too: every point in the score traces back to a feature, so you can always see why a song won.  
 
 ---
 
@@ -128,23 +108,10 @@ An untrimmed space silently downgrades an exact match to a fuzzy one. Sunrise Ci
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+First, fix the input bugs my tests found: strip whitespace and ignore empty strings before scoring. Second, give the system a map of related genres and moods so "metal" counts for a rock fan and "aggressive" counts as "intense." Right now the string matching is too literal. Third, let a profile hold more than one target, since real people like multiple opposite things. Last, I would add a listening history so the system can learn instead of being told, which is what real recommenders like Spotify actually do.  
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+The biggest thing I learned is that a recommender is mostly just a scoring rule plus a ranking, and the hard part is not the math but deciding what deserves points. I was surprised that my bias problems came from the data, not the weights. Lofi got an advantage just because it had more songs in the file. It changed how I think about apps like Spotify: when a recommendation feels off, it is probably not a broken algorithm, it is the system faithfully scoring whatever data it has.  
